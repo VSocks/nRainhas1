@@ -93,9 +93,6 @@ void solveNQueens(int n){
             }
         }
         free(currentState.positions);
-        for(int i = front; i < rear; i++){
-            free(queue[i].positions);
-            }
     }
     free(queue);
 }
