@@ -1,8 +1,4 @@
-//AVISO: esse algoritmo somente funciona até tabuleiros de tamanho 12.
-//Como o uso de memória para um algoritmo de pesquisa por largura cresce exponencilamente,
-//Tentar computar valores muito maiores do que um tabuleiro de tamanho 10 poderia crashar
-//O programa ou até congelar o computador. Descobri na prática. Para que isso não aconteca,
-//Esse código estabelece m limite máximo de computação, excedendo ele o programa para com segfault.
+//AVISO: esse algoritmo trava para inputs muito maiores que 10.
 //De modo geral, esse é um péssimo algoritmo para resolver o problema das N rainhas, e foi feito
 //Por motivos acadêmicos, não para ser usado na prática.
 
@@ -49,36 +45,44 @@ void printSolution(int *positions, int n){
 }
 
 void solveNQueens(int n){
-    //Fila que guarda o estado do tabuleiro.
-    //Possui tamanho máximo, então não é eficiente,
-    //Mas evita congelar o computador por uso excessivo
-    //De memória.
-    State *queue = (State *)malloc(sizeof(State) * 1000000);
+    // Initial capacity for queue
+    int capacity = 10000;
+    
+    State *queue = (State *)malloc(sizeof(State) * capacity);
     int front = 0, rear = 0;
 
-    //Inicia tabuleiro vazio
+    //Aloca tabuleiro vazio
     State initialState;
     initialState.positions = (int *)malloc(sizeof(int) * n);
     initialState.row = 0;
     queue[rear++] = initialState;
 
     while(front < rear){
+        //Aumenta tamanho da fila se necessário
+        if(rear >= capacity){
+            capacity *= 2;
+            queue = (State *)realloc(queue, sizeof(State) * capacity);
+            if(!queue){
+                printf("Falha em alocar memória\n");
+                exit(EXIT_FAILURE);
+            }
+        }
+
         State currentState = queue[front++];
 
-        //Quando todas rainhas forem colocadas, printa solução
+        //Se todas rainhas forem colocadas, imprime solução
         if(currentState.row == n){
             printSolution(currentState.positions, n);
             free(currentState.positions);
-            break;  //Para algoritmo ao encontrar primeira solução
+            continue;
         }
 
-        //Tenta colocar rainhas em cada coluna da linha atual
+        //Tentar colocar rainha na linha atual da coluna atual
         for(int col = 0; col < n; col++){
             if(isSafe(currentState.positions, currentState.row, col)){
-                //Cria novo estado para cada rainha colocada
                 State newState;
                 newState.positions = (int *)malloc(sizeof(int) * n);
-                for(int i = 0; i < currentState.row; i++){
+                for (int i = 0; i < currentState.row; i++){
                     newState.positions[i] = currentState.positions[i];
                 }
                 newState.positions[currentState.row] = col;
