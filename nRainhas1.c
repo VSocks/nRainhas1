@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <time.h>
 
 //Struct que guarda o estado do tabuleiro
 typedef struct{
@@ -98,7 +99,13 @@ int main(int argc, char *argv[]){
         return 1;
     }
 
+    clock_t start = clock();
+
     solveNQueens(n);
+
+    clock_t end = clock();
+    double time_taken = (double)(end - start) / CLOCKS_PER_SEC;
+    printf("Tempo para resolver: %.6f seconds\n", time_taken);
 
     return 0;
 }
