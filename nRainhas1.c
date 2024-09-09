@@ -71,10 +71,11 @@ void solveNQueens(int n){
         State currentState = queue[front++];
 
         //Se todas rainhas forem colocadas, imprime solução
+        //Para o código na primeira solução encontrada
         if(currentState.row == n){
             printSolution(currentState.positions, n);
             free(currentState.positions);
-            continue;
+            break;
         }
 
         //Tentar colocar rainha na linha atual da coluna atual
@@ -92,6 +93,9 @@ void solveNQueens(int n){
             }
         }
         free(currentState.positions);
+        for(int i = front; i < rear; i++){
+            free(queue[i].positions);
+            }
     }
     free(queue);
 }
